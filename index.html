@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PetakVilla - Hunian Asri</title>
+
+    <!-- Tailwind CSS (CDN for standalone usage) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Tailwind Config & Custom Styles -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+            },
+            colors: {
+              primary: "#778C58",
+              primaryLight: "#95A658",
+              grey: "#BFBFBD",
+              earth: "#8C5A2E",
+              dark: "#0D0D0D",
+              softBg: "#E9EBE6",
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      /* --- CSS (Custom Styles) --- */
+      body {
+        background-color: #e9ebe6;
+        color: #0d0d0d;
+      }
+
+      /* Neumorphism Utilities */
+      .soft-shadow {
+        box-shadow: 8px 8px 16px #c6c8c4, -8px -8px 16px #ffffff;
+      }
+
+      .soft-inset {
+        box-shadow: inset 6px 6px 12px #c6c8c4, inset -6px -6px 12px #ffffff;
+      }
+
+      .btn-primary {
+        background-color: #778c58;
+        color: white;
+        box-shadow: 6px 6px 12px #65774b, -6px -6px 12px #89a165;
+        transition: all 0.3s ease;
+      }
+
+      .btn-primary:hover {
+        box-shadow: inset 6px 6px 12px #65774b, inset -6px -6px 12px #89a165;
+      }
+
+      .btn-primary:active {
+        transform: scale(0.95);
+      }
+
+      .card-style {
+        background-color: #e9ebe6;
+        border-radius: 1.5rem;
+        padding: 1.5rem;
+        transition: transform 0.3s ease;
+        box-shadow: 8px 8px 16px #c6c8c4, -8px -8px 16px #ffffff;
+      }
+
+      .card-style:hover {
+        transform: translateY(-4px);
+      }
+
+      /* Hide scrollbar for cleaner look */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #e9ebe6;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #bfbfbd;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #95a658;
+      }
+    </style>
+  </head>
+  <body
+    class="selection:bg-primaryLight selection:text-white overflow-x-hidden"
+  >
+    <!-- --- HTML: Navbar --- -->
+    <nav
+      id="navbar"
+      class="fixed w-full z-50 transition-all duration-300 py-6 bg-transparent"
+    >
+      <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+        <!-- Logo -->
+        <div
+          class="text-2xl font-bold tracking-tighter text-primary flex items-center gap-2"
+        >
+          <span class="p-2 bg-softBg rounded-full soft-shadow">
+            <i data-lucide="wind" class="w-5 h-5"></i>
+          </span>
+          Petak<span class="text-earth">Villa.</span>
+        </div>
+
+        <!-- Desktop Menu -->
+        <div class="hidden md:flex gap-8 items-center">
+          <button
+            onclick="scrollToSection('home')"
+            class="nav-link text-sm font-medium text-grey hover:text-primary transition-colors transition-all duration-300"
+            data-target="home"
+          >
+            Beranda
+          </button>
+          <button
+            onclick="scrollToSection('about')"
+            class="nav-link text-sm font-medium text-grey hover:text-primary transition-colors transition-all duration-300"
+            data-target="about"
+          >
+            Tentang
+          </button>
+          <button
+            onclick="scrollToSection('features')"
+            class="nav-link text-sm font-medium text-grey hover:text-primary transition-colors transition-all duration-300"
+            data-target="features"
+          >
+            Fasilitas
+          </button>
+          <button
+            onclick="scrollToSection('gallery')"
+            class="nav-link text-sm font-medium text-grey hover:text-primary transition-colors transition-all duration-300"
+            data-target="gallery"
+          >
+            Galeri
+          </button>
+          <button
+            onclick="scrollToSection('contact')"
+            class="nav-link text-sm font-medium text-grey hover:text-primary transition-colors transition-all duration-300"
+            data-target="contact"
+          >
+            Kontak
+          </button>
+          <button
+            onclick="scrollToSection('contact')"
+            class="btn-primary px-6 py-2 rounded-full text-sm font-bold"
+          >
+            Booking Sekarang
+          </button>
+        </div>
+
+        <!-- Mobile Toggle -->
+        <button id="mobile-menu-btn" class="md:hidden p-2 text-primary">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
+
+      <!-- Mobile Menu Dropdown -->
+      <div
+        id="mobile-menu"
+        class="hidden md:hidden absolute top-full left-0 w-full bg-softBg shadow-lg p-6 flex flex-col gap-4 border-t border-grey/20"
+      >
+        <button
+          onclick="scrollToSection('home')"
+          class="text-left py-3 text-dark font-medium border-b border-grey/20"
+        >
+          Beranda
+        </button>
+        <button
+          onclick="scrollToSection('about')"
+          class="text-left py-3 text-dark font-medium border-b border-grey/20"
+        >
+          Tentang
+        </button>
+        <button
+          onclick="scrollToSection('features')"
+          class="text-left py-3 text-dark font-medium border-b border-grey/20"
+        >
+          Fasilitas
+        </button>
+        <button
+          onclick="scrollToSection('gallery')"
+          class="text-left py-3 text-dark font-medium border-b border-grey/20"
+        >
+          Galeri
+        </button>
+        <button
+          onclick="scrollToSection('contact')"
+          class="text-left py-3 text-dark font-medium"
+        >
+          Kontak
+        </button>
+      </div>
+    </nav>
+
+    <!-- --- HTML: Hero Section (Beranda) --- -->
+    <section
+      id="home"
+      class="relative min-h-screen flex items-center justify-center overflow-hidden pt-24 pb-12 md:pt-20 md:pb-0"
+    >
+      <!-- Abstract Background Blobs -->
+      <div
+        class="absolute top-[-10%] right-[-10%] w-[300px] h-[300px] md:w-[500px] md:h-[500px] bg-primaryLight/20 rounded-full blur-[60px] md:blur-[100px] pointer-events-none"
+      ></div>
+      <div
+        class="absolute bottom-[-10%] left-[-10%] w-[250px] h-[250px] md:w-[400px] md:h-[400px] bg-earth/10 rounded-full blur-[50px] md:blur-[80px] pointer-events-none"
+      ></div>
+
+      <div
+        class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center z-10"
+      >
+        <div class="space-y-6 order-2 md:order-1 text-center md:text-left">
+          <span
+            id="unit-status"
+            class="inline-block py-1 px-3 rounded-full text-xs font-bold bg-softBg text-earth shadow-[inset_3px_3px_6px_#c6c8c4,inset_-3px_-3px_6px_#ffffff]"
+          >
+            🌿 Memuat ketersediaan...
+          </span>
+          <h1
+            class="text-4xl md:text-6xl font-extrabold leading-tight text-dark"
+          >
+            Kerja Keras Itu Wajar, Tapi
+            <span class="text-primary">Istirahat</span> Harus Layak.
+          </h1>
+          <p class="text-lg text-grey md:text-[#666]">
+            Disewakan:
+            <span class="font-bold text-dark">5 Unit Petak</span> Nuansa Villa
+            di Tengah Kebun. Tenang, Sejuk, dan Bebas Polusi.
+          </p>
+          <div
+            class="flex flex-col md:flex-row gap-4 pt-4 items-center md:items-start"
+          >
+            <button
+              onclick="scrollToSection('gallery')"
+              class="btn-primary w-full md:w-auto px-8 py-4 rounded-2xl flex items-center justify-center gap-2 font-bold"
+            >
+              LIHAT FOTO & HARGA
+              <i data-lucide="arrow-right" class="w-5 h-5"></i>
+            </button>
+          </div>
+        </div>
+
+        <div
+          class="order-1 md:order-2 relative group w-full max-w-md mx-auto md:max-w-none"
+        >
+          <div
+            class="aspect-[4/3] rounded-[2rem] md:rounded-[3rem] overflow-hidden border-4 md:border-8 border-softBg soft-shadow relative"
+          >
+            <img
+              src="https://images.unsplash.com/photo-1599809275372-b4036ffd5b94?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+              alt="Pemandangan Kebun Asri"
+              class="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-110"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-dark/40 to-transparent"
+            ></div>
+            <div
+              class="absolute bottom-6 left-6 text-white bg-white/20 backdrop-blur-md p-4 rounded-2xl border border-white/30"
+            >
+              <p class="font-bold text-sm">🏡 View Langsung Kebun</p>
+              <p class="text-xs opacity-90">Bangun tidur hirup udara segar</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- --- HTML: About Section (Tentang) --- -->
+    <section id="about" class="py-16 md:py-24 bg-softBg">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-12">
+          <!-- Story Side -->
+          <div class="md:col-span-7 space-y-8">
+            <h2
+              class="text-2xl md:text-3xl font-bold text-dark text-center md:text-left"
+            >
+              Kenapa Harus Pindah ke Sini?
+            </h2>
+
+            <div class="card-style border-l-4 border-earth">
+              <h3 class="font-bold text-earth mb-2 flex items-center gap-2">
+                <i data-lucide="wind" class="w-5 h-5"></i> Masalah Anda
+              </h3>
+              <p class="text-gray-600 italic text-sm md:text-base">
+                "Capek kan? Seharian kerja dikejar target, di jalan kena macet,
+                sampai rumah malah sumpek. Kami paham, Anda butuh ketenangan,
+                bukan sekadar tembok untuk tidur."
+              </p>
+            </div>
+
+            <div class="card-style border-l-4 border-primary">
+              <h3 class="font-bold text-primary mb-2 flex items-center gap-2">
+                <i data-lucide="check-circle" class="w-5 h-5"></i> Solusi Kami
+              </h3>
+              <p class="text-gray-600">
+                "Kami menawarkan hunian dengan konsep menyatu dengan alam. Buka
+                pintu langsung lihat hijau, udara bersih, dan suasana hening."
+              </p>
+            </div>
+          </div>
+
+          <!-- Filter Side -->
+          <div class="md:col-span-5">
+            <div
+              class="p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] bg-softBg soft-inset"
+            >
+              <h3
+                class="text-xl font-bold text-dark mb-6 text-center border-b border-grey/30 pb-4"
+              >
+                SIAPA YANG COCOK?
+              </h3>
+              <ul class="space-y-4">
+                <li class="flex items-start gap-3">
+                  <div
+                    class="bg-primary p-1 rounded-full text-white mt-1 shrink-0"
+                  >
+                    <i data-lucide="check-circle" class="w-3 h-3"></i>
+                  </div>
+                  <span class="text-gray-700 text-sm"
+                    >Pekerja Single / Karyawan.</span
+                  >
+                </li>
+                <li class="flex items-start gap-3">
+                  <div
+                    class="bg-primary p-1 rounded-full text-white mt-1 shrink-0"
+                  >
+                    <i data-lucide="check-circle" class="w-3 h-3"></i>
+                  </div>
+                  <span class="text-gray-700 text-sm"
+                    >Pasangan Suami Istri (Tanpa Anak Kecil).</span
+                  >
+                </li>
+                <li class="flex items-start gap-3">
+                  <div
+                    class="bg-primary p-1 rounded-full text-white mt-1 shrink-0"
+                  >
+                    <i data-lucide="check-circle" class="w-3 h-3"></i>
+                  </div>
+                  <span class="text-gray-700 text-sm"
+                    >Usia Produktif (Maksimal 35 Tahun).</span
+                  >
+                </li>
+                <li
+                  class="flex items-start gap-3 mt-6 p-3 bg-softBg rounded-xl soft-shadow"
+                >
+                  <div
+                    class="bg-red-500 p-1 rounded-full text-white mt-1 shrink-0"
+                  >
+                    <i data-lucide="x-circle" class="w-3 h-3"></i>
+                  </div>
+                  <span class="text-gray-600 text-sm italic"
+                    >Mohon maaf, tidak menerima keluarga dengan balita demi
+                    menjaga keheningan.</span
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- --- HTML: Features Section (Fasilitas) --- -->
+    <section id="features" class="py-16 md:py-20 relative">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-12 md:mb-16">
+          <span
+            class="text-primaryLight font-bold tracking-widest text-sm uppercase"
+            >Spesifikasi</span
+          >
+          <h2 class="text-3xl md:text-4xl font-bold text-dark mt-2">
+            Fasilitas Hunian
+          </h2>
+        </div>
+
+        <div
+          class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6"
+        >
+          <!-- Feature 1 -->
+          <div class="card-style flex flex-col items-center text-center group">
+            <div
+              class="p-4 rounded-full bg-softBg soft-shadow text-earth mb-4 group-hover:scale-110 transition-transform"
+            >
+              <i data-lucide="home"></i>
+            </div>
+            <h4 class="font-bold text-dark mb-1">Luas Unit</h4>
+            <p
+              class="text-sm text-grey group-hover:text-gray-600 transition-colors"
+            >
+              4x6 Meter Lega
+            </p>
+          </div>
+          <!-- Feature 2 -->
+          <div class="card-style flex flex-col items-center text-center group">
+            <div
+              class="p-4 rounded-full bg-softBg soft-shadow text-primary mb-4 group-hover:scale-110 transition-transform"
+            >
+              <i data-lucide="wind"></i>
+            </div>
+            <h4 class="font-bold text-dark mb-1">Lingkungan</h4>
+            <p
+              class="text-sm text-grey group-hover:text-gray-600 transition-colors"
+            >
+              Kebun Pribadi
+            </p>
+          </div>
+          <!-- Feature 3 -->
+          <div class="card-style flex flex-col items-center text-center group">
+            <div
+              class="p-4 rounded-full bg-softBg soft-shadow text-blue-500 mb-4 group-hover:scale-110 transition-transform"
+            >
+              <i data-lucide="droplets"></i>
+            </div>
+            <h4 class="font-bold text-dark mb-1">Air & Listrik</h4>
+            <p
+              class="text-sm text-grey group-hover:text-gray-600 transition-colors"
+            >
+              Air Bersih & Token
+            </p>
+          </div>
+          <!-- Feature 4 -->
+          <div class="card-style flex flex-col items-center text-center group">
+            <div
+              class="p-4 rounded-full bg-softBg soft-shadow text-gray-700 mb-4 group-hover:scale-110 transition-transform"
+            >
+              <i data-lucide="map-pin"></i>
+            </div>
+            <h4 class="font-bold text-dark mb-1">Parkir</h4>
+            <p
+              class="text-sm text-grey group-hover:text-gray-600 transition-colors"
+            >
+              Area Aman Motor
+            </p>
+          </div>
+          <!-- Feature 5 -->
+          <div class="card-style flex flex-col items-center text-center group">
+            <div
+              class="p-4 rounded-full bg-softBg soft-shadow text-dark mb-4 group-hover:scale-110 transition-transform"
+            >
+              <i data-lucide="shield-check"></i>
+            </div>
+            <h4 class="font-bold text-dark mb-1">Privasi</h4>
+            <p
+              class="text-sm text-grey group-hover:text-gray-600 transition-colors"
+            >
+              Terjaga
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- --- HTML: Gallery Section (Galeri) --- -->
+    <section id="gallery" class="py-16 md:py-24 bg-softBg">
+      <div class="max-w-7xl mx-auto px-6">
+        <div
+          class="flex flex-col md:flex-row justify-between items-end mb-12 gap-4 md:gap-0"
+        >
+          <div class="text-center md:text-left w-full md:w-auto">
+            <h2 class="text-2xl md:text-3xl font-bold text-dark">
+              Intip Suasana "Rumah" Barumu
+            </h2>
+            <p class="text-grey mt-2 text-sm md:text-base">
+              Jangan percaya kata kami, lihat sendiri.
+            </p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+          <!-- Image 1 -->
+          <div
+            class="group relative rounded-[2rem] overflow-hidden p-3 bg-softBg soft-shadow"
+          >
+            <div class="relative overflow-hidden rounded-[1.5rem] h-80">
+              <img
+                src="https://images.unsplash.com/photo-1510798831971-661eb04b3739?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                alt="Teras Depan"
+                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6"
+              >
+                <span
+                  class="text-primaryLight text-xs font-bold uppercase tracking-wider"
+                  >Teras Depan</span
+                >
+                <p class="text-white font-medium text-lg">
+                  "Ngopi pagi di sini, stres hilang"
+                </p>
+              </div>
+            </div>
+          </div>
+          <!-- Image 2 -->
+          <div
+            class="group relative rounded-[2rem] overflow-hidden p-3 bg-softBg soft-shadow"
+          >
+            <div class="relative overflow-hidden rounded-[1.5rem] h-80">
+              <img
+                src="https://images.unsplash.com/photo-1598928506311-c55ded91a20c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                alt="Interior"
+                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6"
+              >
+                <span
+                  class="text-primaryLight text-xs font-bold uppercase tracking-wider"
+                  >Interior</span
+                >
+                <p class="text-white font-medium text-lg">
+                  "Ruang istirahat yang tenang"
+                </p>
+              </div>
+            </div>
+          </div>
+          <!-- Image 3 -->
+          <div
+            class="group relative rounded-[2rem] overflow-hidden p-3 bg-softBg soft-shadow"
+          >
+            <div class="relative overflow-hidden rounded-[1.5rem] h-80">
+              <img
+                src="https://images.unsplash.com/photo-1613553507747-5f8d62ad5904?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                alt="Akses"
+                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6"
+              >
+                <span
+                  class="text-primaryLight text-xs font-bold uppercase tracking-wider"
+                  >Akses</span
+                >
+                <p class="text-white font-medium text-lg">
+                  "Jauh dari kebisingan jalan raya"
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- --- HTML: Contact & Booking Section (Closing) --- -->
+    <section id="contact" class="py-16 md:py-24 relative overflow-hidden">
+      <!-- Background Decorative -->
+      <div
+        class="absolute inset-0 bg-grey/10 -skew-y-3 z-0 origin-bottom-left scale-110"
+      ></div>
+
+      <div class="max-w-4xl mx-auto px-6 relative z-10">
+        <div
+          class="bg-softBg rounded-[2rem] md:rounded-[3rem] p-6 md:p-12 soft-shadow text-center border border-white/50"
+        >
+          <h2 class="text-3xl md:text-5xl font-bold text-dark mb-6">
+            Amankan Ketenanganmu Sekarang
+          </h2>
+
+          <div class="bg-earth/10 p-6 rounded-2xl mb-8 inline-block max-w-2xl">
+            <p class="text-earth text-lg font-medium">
+              "Hanya tersedia <span class="font-bold">5 unit</span> total. Unit
+              dengan view kebun sangat terbatas dan cepat terisi. Jangan sampai
+              keduluan rekan kerja Anda."
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10 text-left">
+            <div class="p-6 rounded-3xl bg-softBg soft-inset">
+              <h4 class="text-primary font-bold mb-4 flex items-center gap-2">
+                <i data-lucide="zap" class="w-5 h-5"></i> BOOKING MUDAH
+              </h4>
+
+              <!-- Price Added Here -->
+              <div class="mb-4 border-b border-grey/20 pb-4">
+                <p class="text-3xl font-bold text-earth">
+                  Rp350.000
+                  <span class="text-sm text-gray-600 font-normal">/bulan</span>
+                </p>
+                <p class="text-xs text-grey">
+                  Harga bersih, include air & kebersihan lingkungan
+                </p>
+              </div>
+
+              <p class="text-sm text-gray-600 mb-2">
+                Gajian masih lama? Tenang saja.
+              </p>
+              <div
+                class="bg-white/50 p-3 rounded-xl border border-dashed border-grey"
+              >
+                <p class="text-dark font-bold text-lg">
+                  Booking Fee: Rp100.000
+                </p>
+                <p class="text-xs text-gray-500">
+                  Unit otomatis terkunci. Pelunasan saat pindahan.
+                </p>
+              </div>
+            </div>
+
+            <div class="flex flex-col justify-center space-y-4">
+              <button
+                class="w-full bg-[#25D366] text-white py-4 rounded-2xl shadow-[6px_6px_12px_#bfdcae,-6px_-6px_12px_#ffffff] hover:shadow-[inset_6px_6px_12px_#1da851,inset_-6px_-6px_12px_#2de375] transition-all flex items-center justify-center gap-2 text-lg font-bold"
+              >
+                <i data-lucide="phone" class="w-6 h-6"></i> WHATSAPP PEMILIK
+              </button>
+              <p class="text-center text-grey text-sm">
+                Atau hubungi: 08xx-xxxx-xxxx
+              </p>
+            </div>
+          </div>
+
+          <!-- Map Placeholder -->
+          <div
+            class="w-full h-48 bg-grey rounded-2xl overflow-hidden shadow-inner relative group cursor-pointer"
+          >
+            <img
+              src="https://images.unsplash.com/photo-1524661135-423995f22d0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+              class="w-full h-full object-cover opacity-50 group-hover:opacity-70 transition-opacity"
+              alt="Map Background"
+            />
+            <div class="absolute inset-0 flex items-center justify-center">
+              <div
+                class="bg-softBg px-6 py-2 rounded-full shadow-lg flex items-center gap-2 text-primary font-bold"
+              >
+                <i data-lucide="map-pin" class="w-5 h-5"></i> Buka Google Maps
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-8 text-center text-grey text-sm bg-softBg">
+      <p>© 2024 Petak Villa Kebun. All rights reserved.</p>
+    </footer>
+
+    <!-- --- JAVASCRIPT --- -->
+    <script>
+      // Initialize Icons
+      lucide.createIcons();
+
+      // Variables
+      const navbar = document.getElementById("navbar");
+      const mobileMenuBtn = document.getElementById("mobile-menu-btn");
+      const mobileMenu = document.getElementById("mobile-menu");
+      const navLinks = document.querySelectorAll(".nav-link");
+      const sections = document.querySelectorAll("section");
+
+      // Scroll Logic: Navbar Blur & ScrollSpy
+      window.addEventListener("scroll", () => {
+        // 1. Navbar Glass Effect
+        if (window.scrollY > 50) {
+          navbar.classList.add(
+            "bg-softBg/90",
+            "backdrop-blur-md",
+            "shadow-md",
+            "py-2"
+          );
+          navbar.classList.remove("py-6", "bg-transparent");
+        } else {
+          navbar.classList.add("py-6", "bg-transparent");
+          navbar.classList.remove(
+            "bg-softBg/90",
+            "backdrop-blur-md",
+            "shadow-md",
+            "py-2"
+          );
+        }
+
+        // 2. ScrollSpy (Active Link Logic)
+        let current = "";
+
+        sections.forEach((section) => {
+          // Offset calculation to trigger active state slightly before section hits top
+          const sectionTop = section.offsetTop;
+          const sectionHeight = section.clientHeight;
+
+          // 150px offset accounts for navbar height and visual comfort
+          if (pageYOffset >= sectionTop - 150) {
+            current = section.getAttribute("id");
+          }
+        });
+
+        navLinks.forEach((link) => {
+          link.classList.remove("text-primary", "font-bold"); // Remove active style
+          link.classList.add("text-grey"); // Add inactive style
+
+          if (link.dataset.target === current) {
+            link.classList.add("text-primary", "font-bold"); // Add active style
+            link.classList.remove("text-grey"); // Remove inactive style
+          }
+        });
+      });
+
+      // Mobile Menu Toggle
+      mobileMenuBtn.addEventListener("click", () => {
+        const isHidden = mobileMenu.classList.contains("hidden");
+        if (isHidden) {
+          mobileMenu.classList.remove("hidden");
+          mobileMenuBtn.innerHTML = '<i data-lucide="x"></i>';
+        } else {
+          mobileMenu.classList.add("hidden");
+          mobileMenuBtn.innerHTML = '<i data-lucide="menu"></i>';
+        }
+        lucide.createIcons();
+      });
+
+      // Smooth Scroll Function
+      function scrollToSection(id) {
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+
+          // Close mobile menu if open
+          mobileMenu.classList.add("hidden");
+          mobileMenuBtn.innerHTML = '<i data-lucide="menu"></i>';
+          lucide.createIcons();
+
+          // Note: We removed the manual class setting here because the
+          // scroll event listener above will handle it automatically
+          // as the page scrolls to the target.
+        }
+      }
+    </script>
+    <script>
+      // --- KONFIGURASI DATABASE ---
+      const BIN_ID = "6940b6c943b1c97be9f10292";
+      const API_KEY =
+        "$2a$10$gPMn.YZ5G/BYu7W1m0/.6ubBDXd4/s0LE.juNZsRwUKISOGTNRrMi";
+      const URL_DB = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+
+      // Fungsi Cek Status
+      async function fetchLiveStatus() {
+        const statusBadge = document.getElementById("unit-status");
+
+        try {
+          const response = await fetch(URL_DB, {
+            headers: { "X-Master-Key": API_KEY },
+          });
+          const data = await response.json();
+          const units = data.record; // JSONBin menyimpan data di dalam 'record'
+
+          const availableCount = units.filter((u) => u.isAvailable).length;
+
+          if (availableCount > 0) {
+            statusBadge.innerHTML = `🌿 Sisa ${availableCount} Unit • Rp350.000/bln`;
+            statusBadge.classList.remove("bg-red-500", "text-white");
+            statusBadge.classList.add("bg-softBg", "text-earth");
+          } else {
+            statusBadge.innerHTML = `🚫 FULL BOOKED (Antrian Dibuka)`;
+            statusBadge.classList.remove("bg-softBg", "text-earth");
+            statusBadge.classList.add("bg-red-500", "text-white");
+          }
+        } catch (error) {
+          console.error("Gagal koneksi database", error);
+          statusBadge.innerHTML = `🌿 Rp350.000 / Bulan (Limited)`;
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", fetchLiveStatus);
+    </script>
+  </body>
+</html>

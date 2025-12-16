@@ -1,0 +1,117 @@
+<script>
+  lucide.createIcons();
+
+  // --- KONFIGURASI DATABASE ---
+  const BIN_ID = "6940b6c943b1c97be9f10292";
+  const API_KEY =
+    "$2a$10$gPMn.YZ5G/BYu7W1m0/.6ubBDXd4/s0LE.juNZsRwUKISOGTNRrMi";
+  const URL_DB = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+  // 1. Ambil Data
+  async function fetchUnits() {
+    try {
+      const response = await fetch(URL_DB, {
+        headers: { "X-Master-Key": API_KEY },
+      });
+      const data = await response.json();
+      const units = data.record;
+
+      renderUnits(units);
+      calculateStats(units);
+    } catch (error) {
+      alert("Gagal mengambil data!");
+    }
+  }
+
+  // 2. Render Tampilan (Sama seperti sebelumnya)
+  function renderUnits(units) {
+    const container = document.getElementById("units-container");
+    container.innerHTML = "";
+
+    units.forEach((unit) => {
+      const statusColor = unit.isAvailable ? "text-primary" : "text-danger";
+      const statusText = unit.isAvailable ? "TERSEDIA" : "TERISI";
+
+      // Perhatikan: onchange memanggil toggleStatus dengan ID unit
+      const card = `
+                <div class="card relative overflow-hidden group">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-lg font-bold">${unit.name}</h3>
+                            <p class="text-xs text-grey">Unit ID: ${unit.id}</p>
+                        </div>
+                        <span class="text-sm font-bold ${statusColor}">${unit.price.toLocaleString()}</span>
+                    </div>
+                    <div class="flex items-center justify-between mt-4">
+                        <p class="text-sm font-bold ${statusColor}">${statusText}</p>
+                        <div class="relative inline-block w-12 align-middle select-none">
+                            <input type="checkbox" id="toggle-${unit.id}" 
+                                class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer ${
+                                  unit.isAvailable
+                                    ? "right-0 border-primary"
+                                    : "left-0 border-grey"
+                                }" 
+                                ${unit.isAvailable ? "checked" : ""}
+                                onchange="toggleStatus(${
+                                  unit.id
+                                }, this.checked)"/>
+                            <label for="toggle-${
+                              unit.id
+                            }" class="toggle-label block overflow-hidden h-6 rounded-full bg-softBg soft-inset border border-grey/20"></label>
+                        </div>
+                    </div>
+                </div>
+            `;
+      container.innerHTML += card;
+    });
+  }
+
+  // 3. Logic Update Status (Langsung ke JSONBin)
+  async function toggleStatus(id, newStatus) {
+    try {
+      // A. Ambil data terbaru dulu (untuk memastikan tidak menimpa data orang lain)
+      const getResponse = await fetch(URL_DB, {
+        headers: { "X-Master-Key": API_KEY },
+      });
+      const data = await getResponse.json();
+      let units = data.record;
+
+      // B. Ubah data di memori browser
+      const index = units.findIndex((u) => u.id === id);
+      if (index !== -1) {
+        units[index].isAvailable = newStatus;
+
+        // C. Kirim balik (PUT) seluruh data ke JSONBin
+        await fetch(URL_DB, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Master-Key": API_KEY,
+          },
+          body: JSON.stringify(units),
+        });
+
+        // Refresh tampilan
+        fetchUnits();
+        showToast("Status berhasil diupdate!", "success");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Gagal update status via JSONBin");
+    }
+  }
+
+  function calculateStats(units) {
+    const available = units.filter((u) => u.isAvailable).length;
+    document.getElementById("available-count").innerText = `${available} Unit`;
+    document.getElementById("occupied-count").innerText = `${
+      5 - available
+    } Unit`;
+  }
+
+  function showToast(msg) {
+    alert(msg);
+  } // Simpel alert untuk feedback
+
+  // Jalankan
+  fetchUnits();
+</script>
