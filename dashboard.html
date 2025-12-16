@@ -1,117 +1,355 @@
-<script>
-  lucide.createIcons();
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - PetakVilla</title>
 
-  // --- KONFIGURASI DATABASE ---
-  const BIN_ID = "6940b6c943b1c97be9f10292";
-  const API_KEY =
-    "$2a$10$gPMn.YZ5G/BYu7W1m0/.6ubBDXd4/s0LE.juNZsRwUKISOGTNRrMi";
-  const URL_DB = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
-  // 1. Ambil Data
-  async function fetchUnits() {
-    try {
-      const response = await fetch(URL_DB, {
-        headers: { "X-Master-Key": API_KEY },
-      });
-      const data = await response.json();
-      const units = data.record;
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
 
-      renderUnits(units);
-      calculateStats(units);
-    } catch (error) {
-      alert("Gagal mengambil data!");
-    }
-  }
-
-  // 2. Render Tampilan (Sama seperti sebelumnya)
-  function renderUnits(units) {
-    const container = document.getElementById("units-container");
-    container.innerHTML = "";
-
-    units.forEach((unit) => {
-      const statusColor = unit.isAvailable ? "text-primary" : "text-danger";
-      const statusText = unit.isAvailable ? "TERSEDIA" : "TERISI";
-
-      // Perhatikan: onchange memanggil toggleStatus dengan ID unit
-      const card = `
-                <div class="card relative overflow-hidden group">
-                    <div class="flex justify-between items-start mb-4">
-                        <div>
-                            <h3 class="text-lg font-bold">${unit.name}</h3>
-                            <p class="text-xs text-grey">Unit ID: ${unit.id}</p>
-                        </div>
-                        <span class="text-sm font-bold ${statusColor}">${unit.price.toLocaleString()}</span>
-                    </div>
-                    <div class="flex items-center justify-between mt-4">
-                        <p class="text-sm font-bold ${statusColor}">${statusText}</p>
-                        <div class="relative inline-block w-12 align-middle select-none">
-                            <input type="checkbox" id="toggle-${unit.id}" 
-                                class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer ${
-                                  unit.isAvailable
-                                    ? "right-0 border-primary"
-                                    : "left-0 border-grey"
-                                }" 
-                                ${unit.isAvailable ? "checked" : ""}
-                                onchange="toggleStatus(${
-                                  unit.id
-                                }, this.checked)"/>
-                            <label for="toggle-${
-                              unit.id
-                            }" class="toggle-label block overflow-hidden h-6 rounded-full bg-softBg soft-inset border border-grey/20"></label>
-                        </div>
-                    </div>
-                </div>
-            `;
-      container.innerHTML += card;
-    });
-  }
-
-  // 3. Logic Update Status (Langsung ke JSONBin)
-  async function toggleStatus(id, newStatus) {
-    try {
-      // A. Ambil data terbaru dulu (untuk memastikan tidak menimpa data orang lain)
-      const getResponse = await fetch(URL_DB, {
-        headers: { "X-Master-Key": API_KEY },
-      });
-      const data = await getResponse.json();
-      let units = data.record;
-
-      // B. Ubah data di memori browser
-      const index = units.findIndex((u) => u.id === id);
-      if (index !== -1) {
-        units[index].isAvailable = newStatus;
-
-        // C. Kirim balik (PUT) seluruh data ke JSONBin
-        await fetch(URL_DB, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            "X-Master-Key": API_KEY,
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: { sans: ["Inter", "sans-serif"] },
+            colors: {
+              primary: "#778C58",
+              primaryLight: "#95A658",
+              grey: "#BFBFBD",
+              earth: "#8C5A2E",
+              dark: "#0D0D0D",
+              softBg: "#E9EBE6",
+              danger: "#e74c3c",
+            },
           },
-          body: JSON.stringify(units),
-        });
+        },
+      };
+    </script>
 
-        // Refresh tampilan
-        fetchUnits();
-        showToast("Status berhasil diupdate!", "success");
+    <style>
+      body {
+        background-color: #e9ebe6;
+        color: #0d0d0d;
       }
-    } catch (error) {
-      console.error(error);
-      alert("Gagal update status via JSONBin");
-    }
-  }
 
-  function calculateStats(units) {
-    const available = units.filter((u) => u.isAvailable).length;
-    document.getElementById("available-count").innerText = `${available} Unit`;
-    document.getElementById("occupied-count").innerText = `${
-      5 - available
-    } Unit`;
-  }
+      /* Neumorphism Utilities */
+      .soft-shadow {
+        box-shadow: 8px 8px 16px #c6c8c4, -8px -8px 16px #ffffff;
+      }
+      .soft-inset {
+        box-shadow: inset 6px 6px 12px #c6c8c4, inset -6px -6px 12px #ffffff;
+      }
 
-  function showToast(msg) {
-    alert(msg);
-  } // Simpel alert untuk feedback
+      .card {
+        background-color: #e9ebe6;
+        border-radius: 1.5rem;
+        padding: 1.5rem;
+        box-shadow: 8px 8px 16px #c6c8c4, -8px -8px 16px #ffffff;
+        transition: all 0.3s ease;
+      }
 
-  // Jalankan
-  fetchUnits();
-</script>
+      /* Toggle Switch Custom */
+      .toggle-checkbox:checked {
+        right: 0;
+        border-color: #778c58;
+      }
+      .toggle-checkbox:checked + .toggle-label {
+        background-color: #778c58;
+      }
+
+      /* Toast Animation */
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+      .toast {
+        animation: slideIn 0.3s ease-out forwards;
+      }
+    </style>
+  </head>
+  <body
+    class="p-6 md:p-12 min-h-screen selection:bg-primaryLight selection:text-white"
+  >
+    <header
+      class="max-w-7xl mx-auto mb-10 flex flex-col md:flex-row justify-between items-center gap-4"
+    >
+      <div>
+        <h1 class="text-3xl font-extrabold text-dark flex items-center gap-2">
+          <i data-lucide="layout-dashboard" class="text-primary"></i> Dashboard
+          Admin
+        </h1>
+        <p class="text-grey mt-1">
+          Kelola ketersediaan unit PetakVilla secara real-time.
+        </p>
+      </div>
+      <div class="flex gap-4">
+        <div
+          class="px-6 py-3 rounded-xl soft-inset flex flex-col items-center min-w-[140px]"
+        >
+          <span class="text-xs text-grey uppercase font-bold"
+            >Est. Pendapatan</span
+          >
+          <span id="revenue-display" class="font-bold text-earth text-lg"
+            >Rp0</span
+          >
+        </div>
+        <a
+          href="index.html"
+          target="_blank"
+          class="px-6 py-3 rounded-xl soft-shadow bg-softBg text-primary font-bold hover:text-dark transition-colors flex items-center gap-2 hover:scale-105 transform duration-300"
+        >
+          <i data-lucide="external-link" class="w-4 h-4"></i> Lihat Web
+        </a>
+      </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <div class="card flex items-center gap-4">
+          <div class="p-4 rounded-full bg-softBg soft-shadow text-primary">
+            <i data-lucide="home"></i>
+          </div>
+          <div>
+            <h3 class="text-grey text-sm font-bold uppercase">Total Unit</h3>
+            <p class="text-2xl font-bold text-dark">5 Unit</p>
+          </div>
+        </div>
+        <div class="card flex items-center gap-4">
+          <div class="p-4 rounded-full bg-softBg soft-shadow text-earth">
+            <i data-lucide="check-circle"></i>
+          </div>
+          <div>
+            <h3 class="text-grey text-sm font-bold uppercase">Tersedia</h3>
+            <p id="available-count" class="text-2xl font-bold text-dark">...</p>
+          </div>
+        </div>
+        <div class="card flex items-center gap-4">
+          <div class="p-4 rounded-full bg-softBg soft-shadow text-danger">
+            <i data-lucide="users"></i>
+          </div>
+          <div>
+            <h3 class="text-grey text-sm font-bold uppercase">Terisi</h3>
+            <p id="occupied-count" class="text-2xl font-bold text-dark">...</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 mb-6 pl-2 border-l-4 border-primary">
+        <h2 class="text-xl font-bold text-dark">Manajemen Status Unit</h2>
+        <button
+          onclick="fetchUnits()"
+          class="p-2 rounded-full hover:bg-black/5 text-grey transition-colors"
+          title="Refresh Data"
+        >
+          <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div
+        id="units-container"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+      >
+        <div
+          class="col-span-full text-center py-20 text-grey flex flex-col items-center"
+        >
+          <i
+            data-lucide="loader-2"
+            class="animate-spin w-10 h-10 mb-4 text-primary"
+          ></i>
+          <p>Sedang menghubungkan ke Serverless Function...</p>
+        </div>
+      </div>
+    </main>
+
+    <div
+      id="toast-container"
+      class="fixed bottom-5 right-5 z-50 flex flex-col gap-3"
+    ></div>
+
+    <script>
+      lucide.createIcons();
+
+      // --- KONFIGURASI API (NETLIFY) ---
+      // Menggunakan relative path agar otomatis terhubung ke functions/units.js
+      const API_URL = "/api/units";
+
+      // --- 1. Fetch Data ---
+      async function fetchUnits() {
+        try {
+          const response = await fetch(API_URL);
+          if (!response.ok) throw new Error("Network response was not ok");
+
+          const units = await response.json();
+          renderUnits(units);
+          calculateStats(units);
+        } catch (error) {
+          showToast("Gagal mengambil data! Cek koneksi internet.", "error");
+          console.error("Fetch Error:", error);
+        }
+      }
+
+      // --- 2. Render UI ---
+      function renderUnits(units) {
+        const container = document.getElementById("units-container");
+        container.innerHTML = "";
+
+        // Sort unit berdasarkan ID agar urut
+        units.sort((a, b) => a.id - b.id);
+
+        units.forEach((unit) => {
+          const statusColor = unit.isAvailable ? "text-primary" : "text-danger";
+          const statusText = unit.isAvailable
+            ? "KOSONG / TERSEDIA"
+            : "TERISI / DIHUNI";
+          const cardBg = unit.isAvailable ? "" : "opacity-90";
+
+          const card = `
+                    <div class="card ${cardBg} relative overflow-hidden group border border-transparent hover:border-primary/20">
+                        <div class="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+                            <i data-lucide="home" class="w-32 h-32"></i>
+                        </div>
+                        
+                        <div class="flex justify-between items-start mb-4 relative z-10">
+                            <div>
+                                <h3 class="text-lg font-bold text-dark">${
+                                  unit.name
+                                }</h3>
+                                <p class="text-xs text-grey font-mono">ID Unit: ${
+                                  unit.id
+                                }</p>
+                            </div>
+                            <span class="text-sm font-bold ${statusColor}">${unit.price.toLocaleString(
+            "id-ID"
+          )}</span>
+                        </div>
+
+                        <div class="flex items-center justify-between mt-6 relative z-10 bg-softBg/50 p-2 rounded-xl border border-white/50">
+                            <div>
+                                <p class="text-[10px] font-bold tracking-widest text-grey uppercase mb-1">Status</p>
+                                <p class="text-xs font-bold ${statusColor} flex items-center gap-1">
+                                    ${statusText}
+                                </p>
+                            </div>
+
+                            <div class="relative inline-block w-12 mr-1 align-middle select-none transition duration-200 ease-in">
+                                <input type="checkbox" name="toggle" id="toggle-${
+                                  unit.id
+                                }" 
+                                    class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer transition-all duration-300 ${
+                                      unit.isAvailable
+                                        ? "right-0 border-primary"
+                                        : "left-0 border-grey"
+                                    }" 
+                                    ${unit.isAvailable ? "checked" : ""}
+                                    onchange="toggleStatus(${
+                                      unit.id
+                                    }, this.checked)"/>
+                                <label for="toggle-${
+                                  unit.id
+                                }" class="toggle-label block overflow-hidden h-6 rounded-full bg-softBg soft-inset cursor-pointer border border-grey/20"></label>
+                            </div>
+                        </div>
+                    </div>
+                `;
+          container.innerHTML += card;
+        });
+        lucide.createIcons();
+      }
+
+      // --- 3. Logic: Update Status (PATCH ke Netlify Function) ---
+      async function toggleStatus(id, newStatus) {
+        try {
+          // Tampilkan loading visual sederhana (optional) atau toast proses
+          // showToast('Sedang mengupdate...', 'process');
+
+          const res = await fetch(`${API_URL}/${id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ isAvailable: newStatus }),
+          });
+
+          if (!res.ok) throw new Error("Update failed");
+
+          const data = await res.json();
+          showToast(
+            `Unit berhasil diupdate menjadi ${
+              newStatus ? "TERSEDIA" : "TERISI"
+            }`,
+            "success"
+          );
+
+          // Refresh data untuk memastikan sinkronisasi
+          fetchUnits();
+        } catch (error) {
+          showToast("Gagal update status. Coba lagi.", "error");
+          console.error(error);
+          fetchUnits(); // Reload agar switch kembali ke posisi asli
+        }
+      }
+
+      // --- 4. Logic: Stats Calculation ---
+      function calculateStats(units) {
+        const available = units.filter((u) => u.isAvailable).length;
+        const occupied = units.length - available;
+
+        // Hitung estimasi revenue (hanya dari yang terisi)
+        const revenue = units
+          .filter((u) => !u.isAvailable)
+          .reduce((acc, curr) => acc + curr.price, 0);
+
+        document.getElementById(
+          "available-count"
+        ).innerText = `${available} Unit`;
+        document.getElementById(
+          "occupied-count"
+        ).innerText = `${occupied} Unit`;
+        document.getElementById(
+          "revenue-display"
+        ).innerText = `Rp${revenue.toLocaleString("id-ID")}`;
+      }
+
+      // --- 5. Toast Notification System ---
+      function showToast(message, type = "success") {
+        const container = document.getElementById("toast-container");
+        const toast = document.createElement("div");
+
+        let color = "bg-primary text-white";
+        let iconName = "check-circle";
+
+        if (type === "error") {
+          color = "bg-red-500 text-white";
+          iconName = "alert-circle";
+        }
+
+        toast.className = `toast px-6 py-4 rounded-xl shadow-lg flex items-center gap-3 ${color} backdrop-blur-md`;
+        toast.innerHTML = `
+                <i data-lucide="${iconName}" class="w-5 h-5"></i>
+                <span class="font-medium text-sm">${message}</span>
+            `;
+
+        container.appendChild(toast);
+        lucide.createIcons();
+
+        // Auto remove after 3 seconds
+        setTimeout(() => {
+          toast.style.opacity = "0";
+          setTimeout(() => toast.remove(), 300);
+        }, 3000);
+      }
+
+      // Init App
+      document.addEventListener("DOMContentLoaded", fetchUnits);
+    </script>
+  </body>
+</html>

@@ -734,23 +734,17 @@
       }
     </script>
     <script>
-      // --- KONFIGURASI DATABASE ---
-      const BIN_ID = "6940b6c943b1c97be9f10292";
-      const API_KEY =
-        "$2a$10$gPMn.YZ5G/BYu7W1m0/.6ubBDXd4/s0LE.juNZsRwUKISOGTNRrMi";
-      const URL_DB = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+      // --- KONFIGURASI API (RELATIVE PATH) ---
+      // Karena HTML dan Backend satu domain di Netlify, cukup begini:
+      const API_URL = "/api/units";
 
-      // Fungsi Cek Status
       async function fetchLiveStatus() {
         const statusBadge = document.getElementById("unit-status");
-
         try {
-          const response = await fetch(URL_DB, {
-            headers: { "X-Master-Key": API_KEY },
-          });
-          const data = await response.json();
-          const units = data.record; // JSONBin menyimpan data di dalam 'record'
+          const response = await fetch(API_URL);
+          if (!response.ok) throw new Error("Gagal koneksi");
 
+          const units = await response.json();
           const availableCount = units.filter((u) => u.isAvailable).length;
 
           if (availableCount > 0) {
@@ -763,11 +757,10 @@
             statusBadge.classList.add("bg-red-500", "text-white");
           }
         } catch (error) {
-          console.error("Gagal koneksi database", error);
+          console.error(error);
           statusBadge.innerHTML = `🌿 Rp350.000 / Bulan (Limited)`;
         }
       }
-
       document.addEventListener("DOMContentLoaded", fetchLiveStatus);
     </script>
   </body>
